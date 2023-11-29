@@ -11,3 +11,4 @@ __pycache__/
 *.parquet
 *.mp3
 *.wav
+*.egg-info/

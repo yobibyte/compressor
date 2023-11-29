@@ -1,0 +1,13 @@
+output
+*.txt
+__pycache__/
+*.log
+*.csv
+.DS_Store
+*.html
+*.pdf
+*.tex
+*.out
+*.parquet
+*.mp3
+*.wav

@@ -1,8 +1,9 @@
+"""Main entry point for the compressor."""
+import argparse
 import crawler
 import compressor
 import model
 import reporter
-import argparse
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(

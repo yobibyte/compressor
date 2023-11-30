@@ -31,4 +31,4 @@ Crawler -> Compressor -> Reporter
 ## Big TODOs
 
 * Current version does summarisation based on abstracts only. Add full-text support.
-* Better exception handling. Right now, postprocessing LLM outputs might fail from time to time requriring rerunning the compressor.
+* Better exception handling. Right now, postprocessing LLM outputs might fail from time to time requiring rerunning the compressor.

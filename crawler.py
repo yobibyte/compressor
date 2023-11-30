@@ -9,7 +9,6 @@ from getpass import getpass
 import os
 
 CATEGORIES_OF_INTEREST = {"cs.LG", "cs.AI", "cs.CV", "cs.CL"}
-SEP = "|"
 PAGE_SIZE = 100
 # TODO add support for multiple dates. Probably keep the last date of submission and get everything up until now.
 DESIRED_DATE = datetime.now() - timedelta(1)
@@ -43,14 +42,15 @@ def api_call(start=0, max_results=100):
     return feedparser.parse(results)
 
 
-def crawl_arxiv():
+def crawl_arxiv(db: PaperDB | None = None):
     ctr = 0
     # Arxiv does not track the announcement date.
     # This is the date the paper was submitted.
     ty, tm, td = DESIRED_DATE.strftime("%Y-%m-%d").split("-")
     print(ty, tm, td)
     stop_parsing = False
-    db = PaperDB()
+    if not db:
+        db = PaperDB()
     while True:
         results = api_call(ctr, PAGE_SIZE)
         for el in results["entries"]:
@@ -84,11 +84,6 @@ def crawl_arxiv():
     print(f"Found {len(valid_entries)} papers.")
     if len(valid_entries) > 0:
         db.commit()
-        with open(f"{ty}-{tm}-{td}.txt", "w") as f:
-            for paper in valid_entries.iterrows():
-                f.write(
-                    f"{paper[1].title}{SEP}{paper[1].url}{SEP}{paper[1].abstract}\n"
-                )
 
 
 def crawl_openreview(output_fname: str, venue_id: str):

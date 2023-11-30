@@ -36,4 +36,4 @@ if __name__ == "__main__":
         crawler.crawl_arxiv()
         c = compressor.ArxivCompressor(c_model)
         c.compress()
-        reporter.generate_html_for_arxiv()
+        reporter.generate_html_report()

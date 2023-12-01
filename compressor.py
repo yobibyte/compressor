@@ -5,9 +5,9 @@ import model
 
 
 class Compressor:
-    def __init__(self, source: str, model: model.CompressorModel):
+    def __init__(self, source: str, model: model.CompressorModel, db: PaperDB | None = None):
         self._source = source
-        self._db = PaperDB()
+        self._db = db if db else PaperDB()
         self._model = model
 
     def retrieve(self):

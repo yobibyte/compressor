@@ -36,13 +36,13 @@ if __name__ == "__main__":
         # Add option to summarise full papers.
         if not args.url:
             raise ValueError("You need to provide the Arxiv URL to summarise.")
-        paper_abstract = crawlers.get_arxiv_paper_by_url(args.url)["summary"]
+        paper_abstract = crawlers.ArxivCrawler().get_abstract(args.url)
         compression_result = c_model.go(paper_abstract)
         print(compression_result)
     elif args.task == "nature-url":
         if not args.url:
             raise ValueError("You need to provide the Nature URL to summarise.")
-        paper_abstract = crawlers.get_nature_paper_by_url(args.url)
+        paper_abstract = crawlers.NatureCrawler().get_abstract(args.url)
         compression_result = c_model.go(paper_abstract)
         print(compression_result)
     elif args.task == "daily-arxiv":

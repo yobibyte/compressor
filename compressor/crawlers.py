@@ -9,6 +9,7 @@ import openreview
 from bs4 import BeautifulSoup
 from getpass import getpass
 import os
+from abc import ABC, abstractmethod
 
 CATEGORIES_OF_INTEREST = {"cs.LG", "cs.AI", "cs.CV", "cs.CL"}
 PAGE_SIZE = 100
@@ -28,27 +29,56 @@ keywords_to_skip = [
 ]
 
 
-def get_nature_paper_by_url(url: str) -> str:
-    id = url.split("/")[-1].strip("/")
-    url = f"https://www.nature.com/articles/{id}"
-    data = urllib.request.urlopen(url)
-    soup = BeautifulSoup(
-        data.read().decode("utf-8"),
-        "html.parser",
-    )
-    abstract_content = soup.find(
-        "div",
-        attrs={"id": "Abs1-content"},
-    )
-    return abstract_content.get_text()
+class AbstractCrawler(ABC):
+    @abstractmethod
+    def crawl(self, url: str):
+        ...
+
+    @abstractmethod
+    def get_full_text(self, url: str) -> str:
+        ...
+
+    @abstractmethod
+    def get_abstract(self, url: str) -> str:
+        ...
 
 
-def get_arxiv_paper_by_url(url: str):
-    id = url.split("/")[-1].strip("/")
-    url = f"http://export.arxiv.org/api/query?search_query=id:{id}&sortBy=submittedDate&sortOrder=descending&max_results=1"
-    data = urllib.request.urlopen(url)
-    results = data.read().decode("utf-8")
-    return feedparser.parse(results).entries[0]
+class NatureCrawler(AbstractCrawler):
+    def crawl(self, url: str):
+        # TODO: return Paper class here, not response. 
+        # response -> Paper object is a responsibility
+        # of each of the Crawler Class objects.
+        id = url.split("/")[-1].strip("/")
+        url = f"https://www.nature.com/articles/{id}"
+        return urllib.request.urlopen(url)
+
+    def get_abstract(self, url: str) -> str:
+        data = self.crawl(url)
+        soup = BeautifulSoup(
+            data.read().decode("utf-8"),
+            "html.parser",
+        )
+        abstract_content = soup.find(
+            "div",
+            attrs={"id": "Abs1-content"},
+        )
+        return abstract_content.get_text()
+
+    def get_full_text(self, url: str) -> str:
+        raise NotImplementedError()
+
+class ArxivCrawler(AbstractCrawler):
+    def crawl(self, url: str):
+        id = url.split("/")[-1].strip("/")
+        url = f"http://export.arxiv.org/api/query?search_query=id:{id}&sortBy=submittedDate&sortOrder=descending&max_results=1"
+        return urllib.request.urlopen(url)
+
+    def get_abstract(self, url: str):
+        data = self.crawl(url)
+        results = data.read().decode("utf-8")
+        return feedparser.parse(results).entries[0]["summary"]
+    def get_full_text(self, url: str) -> str:
+        raise NotImplementedError()
 
 
 def api_call(start=0, max_results=100):
@@ -59,6 +89,7 @@ def api_call(start=0, max_results=100):
     return feedparser.parse(results)
 
 
+# Use ArxivCrawler here
 def crawl_arxiv(db: PaperDB | None = None):
     ctr = 0
     # Arxiv does not track the announcement date.
@@ -102,7 +133,6 @@ def crawl_arxiv(db: PaperDB | None = None):
     if len(valid_entries) > 0:
         db.commit()
 
-
 def crawl_openreview(output_fname: str, venue_id: str):
     username = input("Enter your OpenReview email.")
     password = getpass()
@@ -131,6 +161,7 @@ def crawl_openreview(output_fname: str, venue_id: str):
 
 
 if __name__ == "__main__":
-    paper = get_nature_paper_by_url(
+    abstract = NatureCrawler().get_abstract(
         "https://www.nature.com/articles/s41586-023-06735-9"
     )
+    print(abstract)

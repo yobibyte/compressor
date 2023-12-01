@@ -13,7 +13,14 @@ if __name__ == "__main__":
         "-m", "--model", default="orca", choices=model.MODEL_MENU.keys()
     )
     parser.add_argument(
-        "-t", "--task", default="arxiv-url", choices=["arxiv-url", "daily-arxiv"]
+        "-t",
+        "--task",
+        default="arxiv-url",
+        choices=[
+            "arxiv-url",
+            "daily-arxiv",
+            "nature-url",
+        ],
     )
     parser.add_argument(
         "-u",
@@ -32,8 +39,16 @@ if __name__ == "__main__":
         paper_abstract = crawler.get_arxiv_paper_by_url(args.url)["summary"]
         compression_result = c_model.go(paper_abstract)
         print(compression_result)
-    if args.task == "daily-arxiv":
+    elif args.task == "nature-url":
+        if not args.url:
+            raise ValueError("You need to provide the Nature URL to summarise.")
+        paper_abstract = crawler.get_nature_paper_by_url(args.url)
+        compression_result = c_model.go(paper_abstract)
+        print(compression_result)
+    elif args.task == "daily-arxiv":
         crawler.crawl_arxiv()
         c = compressor.ArxivCompressor(c_model)
         c.compress()
         reporter.arxiv_daily_with_report()
+    else:
+        raise ValueError("Unknown task.")

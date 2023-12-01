@@ -5,6 +5,7 @@ from datetime import datetime, timedelta
 from data import Paper
 from data import PaperDB
 import openreview
+from bs4 import BeautifulSoup
 from getpass import getpass
 import os
 
@@ -24,6 +25,21 @@ keywords_to_skip = [
     "surveillance",
     "structure prediction",
 ]
+
+
+def get_nature_paper_by_url(url: str) -> str:
+    id = url.split("/")[-1].strip("/")
+    url = f"https://www.nature.com/articles/{id}"
+    data = urllib.request.urlopen(url)
+    soup = BeautifulSoup(
+        data.read().decode("utf-8"),
+        "html.parser",
+    )
+    abstract_content = soup.find(
+        "div",
+        attrs={"id": "Abs1-content"},
+    )
+    return abstract_content.get_text()
 
 
 def get_arxiv_paper_by_url(url: str):
@@ -114,4 +130,6 @@ def crawl_openreview(output_fname: str, venue_id: str):
 
 
 if __name__ == "__main__":
-    crawl_arxiv()
+    paper = get_nature_paper_by_url(
+        "https://www.nature.com/articles/s41586-023-06735-9"
+    )

@@ -2,7 +2,7 @@
 
 
 
-pip3 install jax jaxlib pandas tqdm feedparser pyarrow
+pip3 install jax jaxlib pandas tqdm feedparser pyarrow beautifulsoup4
 
 git clone git@github.com:openreview/openreview-py.git ../openreview-py
 cd ../openreview-py

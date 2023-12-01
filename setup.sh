@@ -2,7 +2,7 @@
 
 
 
-pip3 install jax jaxlib pandas tqdm feedparser pyarrow
+pip3 install jax jaxlib pandas tqdm feedparser pyarrow beautifulsoup4 huggingface_hub[cli]
 
 git clone git@github.com:openreview/openreview-py.git ../openreview-py
 cd ../openreview-py
@@ -16,7 +16,7 @@ make
 # if GPU is available, use this instead. TODO: make a flag for this.
 # sudo apt-get install nvidia-cuda-toolkit
 # make LLAMA_CUBLAS=1
-huggingface-cli download TheBloke/oorca-2-13b.Q8_0.gguf --local-dir ./models --local-dir-use-symlinks False
+huggingface-cli download TheBloke/Orca-2-13B-GGUF orca-2-13b.Q8_0.gguf --local-dir ./models --local-dir-use-symlinks False
 cd ../compressor
 
 

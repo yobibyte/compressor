@@ -1,16 +1,16 @@
 """Main entry point for the compressor."""
 import argparse
-import crawler
-import compressor
-import model
-import reporter
+from compressor import crawlers
+from compressor import compressors
+from compressor import models
+from compressor import reporters
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         prog="Compressor", description="Compress the internet"
     )
     parser.add_argument(
-        "-m", "--model", default="orca", choices=model.MODEL_MENU.keys()
+        "-m", "--model", default="orca", choices=models.MODEL_MENU.keys()
     )
     parser.add_argument(
         "-t",
@@ -30,25 +30,25 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
-    c_model = model.MODEL_MENU[args.model]()
+    c_model = models.MODEL_MENU[args.model]()
 
     if args.task == "arxiv-url":
         # Add option to summarise full papers.
         if not args.url:
             raise ValueError("You need to provide the Arxiv URL to summarise.")
-        paper_abstract = crawler.get_arxiv_paper_by_url(args.url)["summary"]
+        paper_abstract = crawlers.get_arxiv_paper_by_url(args.url)["summary"]
         compression_result = c_model.go(paper_abstract)
         print(compression_result)
     elif args.task == "nature-url":
         if not args.url:
             raise ValueError("You need to provide the Nature URL to summarise.")
-        paper_abstract = crawler.get_nature_paper_by_url(args.url)
+        paper_abstract = crawlers.get_nature_paper_by_url(args.url)
         compression_result = c_model.go(paper_abstract)
         print(compression_result)
     elif args.task == "daily-arxiv":
-        crawler.crawl_arxiv()
-        c = compressor.ArxivCompressor(c_model)
+        crawlers.crawl_arxiv()
+        c = compressors.ArxivCompressor(c_model)
         c.compress()
-        reporter.arxiv_daily_with_report()
+        reporters.arxiv_daily_with_report()
     else:
         raise ValueError("Unknown task.")

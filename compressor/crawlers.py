@@ -1,9 +1,10 @@
-import urllib, urllib.request
+import urllib
+import urllib.request
 from tqdm import tqdm
 import feedparser
 from datetime import datetime, timedelta
-from data import Paper
-from data import PaperDB
+from compressor.data import Paper
+from compressor.data import PaperDB
 import openreview
 from bs4 import BeautifulSoup
 from getpass import getpass

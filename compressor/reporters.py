@@ -1,6 +1,6 @@
 # git clone git@github.com:openreview/openreview-py.git
 
-from data import PaperDB
+from compressor.data import PaperDB
 from tqdm import tqdm
 import pandas as pd
 
@@ -24,6 +24,7 @@ def generate_html_report(
             f.write(f"<p><a href='{url}'>{url}</a></p>\n")
             f.write(f"<p><b>Compressor summary</b>: {summary}</p>")
 
+
 def arxiv_daily_with_report():
     db = PaperDB()
     arxiv_df = db.get_papers_for_source("arxiv")
@@ -36,6 +37,7 @@ def arxiv_daily_with_report():
             <title>COMPRESSOR!!!</title>
     """
     generate_html_report(arxiv_df, header, "report.html")
+
 
 if __name__ == "__main__":
     arxiv_daily_with_report()

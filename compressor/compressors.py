@@ -1,11 +1,12 @@
-from numpy import compress
-from data import PaperDB
+from compressor.data import PaperDB
 from tqdm import tqdm
-import model
+from compressor import models
 
 
 class Compressor:
-    def __init__(self, source: str, model: model.CompressorModel, db: PaperDB | None = None):
+    def __init__(
+        self, source: str, model: models.CompressorModel, db: PaperDB | None = None
+    ):
         self._source = source
         self._db = db if db else PaperDB()
         self._model = model

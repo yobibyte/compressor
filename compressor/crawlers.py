@@ -1,16 +1,17 @@
-import urllib
+import os
 import re
+import urllib
 import urllib.request
-from tqdm import tqdm
-import feedparser
+from abc import ABC, abstractmethod
 from datetime import datetime, timedelta
-from compressor.data import Paper
-from compressor.data import PaperDB
+from getpass import getpass
+
+import feedparser
 import openreview
 from bs4 import BeautifulSoup
-from getpass import getpass
-import os
-from abc import ABC, abstractmethod
+from tqdm import tqdm
+
+from compressor.data import Paper, PaperDB
 
 CATEGORIES_OF_INTEREST = {"cs.LG", "cs.AI", "cs.CV", "cs.CL"}
 PAGE_SIZE = 100

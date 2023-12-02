@@ -1,9 +1,7 @@
 """Main entry point for the compressor."""
 import argparse
-from compressor import crawlers
-from compressor import compressors
-from compressor import models
-from compressor import reporters
+
+from compressor import compressors, crawlers, models, reporters
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -43,7 +41,6 @@ if __name__ == "__main__":
         if not args.url:
             raise ValueError("You need to provide the Nature URL to summarise.")
         paper_abstract = crawlers.NatureCrawler().get_abstract(args.url)
-        print(paper_abstract)
         compression_result = c_model.go(paper_abstract)
         print(compression_result)
     elif args.task == "daily-arxiv":

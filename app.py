@@ -43,6 +43,7 @@ if __name__ == "__main__":
         if not args.url:
             raise ValueError("You need to provide the Nature URL to summarise.")
         paper_abstract = crawlers.NatureCrawler().get_abstract(args.url)
+        print(paper_abstract)
         compression_result = c_model.go(paper_abstract)
         print(compression_result)
     elif args.task == "daily-arxiv":

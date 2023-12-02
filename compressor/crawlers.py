@@ -1,4 +1,5 @@
 import urllib
+import re
 import urllib.request
 from tqdm import tqdm
 import feedparser
@@ -45,7 +46,7 @@ class AbstractCrawler(ABC):
 
 class NatureCrawler(AbstractCrawler):
     def crawl(self, url: str):
-        # TODO: return Paper class here, not response. 
+        # TODO: return Paper class here, not response.
         # response -> Paper object is a responsibility
         # of each of the Crawler Class objects.
         id = url.split("/")[-1].strip("/")
@@ -60,12 +61,13 @@ class NatureCrawler(AbstractCrawler):
         )
         abstract_content = soup.find(
             "div",
-            attrs={"id": "Abs1-content"},
+            attrs={"id": re.compile("Abs\d-content")},
         )
         return abstract_content.get_text()
 
     def get_full_text(self, url: str) -> str:
         raise NotImplementedError()
+
 
 class ArxivCrawler(AbstractCrawler):
     def crawl(self, url: str):
@@ -77,6 +79,7 @@ class ArxivCrawler(AbstractCrawler):
         data = self.crawl(url)
         results = data.read().decode("utf-8")
         return feedparser.parse(results).entries[0]["summary"]
+
     def get_full_text(self, url: str) -> str:
         raise NotImplementedError()
 
@@ -132,6 +135,7 @@ def crawl_arxiv(db: PaperDB | None = None):
     print(f"Found {len(valid_entries)} papers.")
     if len(valid_entries) > 0:
         db.commit()
+
 
 def crawl_openreview(output_fname: str, venue_id: str):
     username = input("Enter your OpenReview email.")

@@ -16,7 +16,7 @@ from compressor.data import Paper, PaperDB
 CATEGORIES_OF_INTEREST = {"cs.LG", "cs.AI", "cs.CV", "cs.CL"}
 PAGE_SIZE = 100
 # TODO add support for multiple dates. Probably keep the last date of submission and get everything up until now.
-DESIRED_DATE = datetime.now() - timedelta(1)
+# ^^^ Crawlers support the oldest date to parse now. Compressor now compresses everything that is not compressed yet. Make this work for reporter. Use oldest date as well.
 
 keywords_to_skip = [
     "adversarial attacks",
@@ -94,48 +94,53 @@ def api_call(start=0, max_results=100):
 
 
 # Use ArxivCrawler here
-def crawl_arxiv(db: PaperDB | None = None):
+def crawl_arxiv(db: PaperDB | None = None, oldest_date: datetime | None = None):
+    """Crawl all Arxiv articles given the filters.
+
+    Args:
+        db: PaperDB object that stores our articles.
+        oldest_date: datetime object that defines the oldest date we will
+            crawl the articles for. This date is included.
+    """
     ctr = 0
     # Arxiv does not track the announcement date.
     # This is the date the paper was submitted.
-    ty, tm, td = DESIRED_DATE.strftime("%Y-%m-%d").split("-")
-    print(ty, tm, td)
-    stop_parsing = False
+
     if not db:
         db = PaperDB()
+    # TODO: replace arxiv with a constant.
+    if oldest_date is None:
+        oldest_date = datetime.now() - timedelta(1)
+    print(f"Oldest date to crawl for: {oldest_date}")
+    stop_crawling = False
     while True:
         results = api_call(ctr, PAGE_SIZE)
         for el in results["entries"]:
-            entry_date = datetime.fromisoformat(el["published"].rstrip("Z")).strftime(
-                "%Y-%m-%d"
-            )
-            ey, em, ed = entry_date.split("-")
-            if ty == ey and tm == em and td == ed:
+            entry_date = datetime.fromisoformat(el["published"].rstrip("Z"))
+            if entry_date >= oldest_date:
                 if el["arxiv_primary_category"]["term"] in CATEGORIES_OF_INTEREST:
                     paper = Paper(
                         title=el["title"].replace("\n", ""),
                         abstract=el["summary"].replace("\n", " "),
                         url=el["link"],
                         authors=",".join([a["name"] for a in el["authors"]]),
-                        date_published=entry_date,
+                        date_published=entry_date.strftime("%Y-%m-%d").split("-"),
                         source="arxiv",
                     )
                     casefold_summary = paper.abstract.casefold()
                     if not any([kw in casefold_summary for kw in keywords_to_skip]):
                         if paper.url not in db._df.url.values:
                             db.add(paper)
+                            db.commit()
             else:
-                stop_parsing = True
+                # Since responses are sorted by date, as soon as we are beyond the target date,
+                # we are done.
+                stop_crawling = True
                 break
-        print(f"Parsing in progress...")
-        if stop_parsing:
+        print(f"Crawling in progress...")
+        if stop_crawling:
             break
         ctr += PAGE_SIZE
-
-    valid_entries = db.get_papers_for_date(f"{ty}-{tm}-{td}")
-    print(f"Found {len(valid_entries)} papers.")
-    if len(valid_entries) > 0:
-        db.commit()
 
 
 def crawl_openreview(output_fname: str, venue_id: str):

@@ -16,6 +16,7 @@ class Compressor:
 
     def compress(self):
         df = self.retrieve()
+        print(f"Compressing {len(df)} papers...")
         results = []
         for pid, paper in tqdm(df.iterrows(), total=len(df)):
             title = paper.title
@@ -33,7 +34,4 @@ class ArxivCompressor(Compressor):
 
     def retrieve(self):
         df = super().retrieve()
-        # Summarise the latest results from arxiv.
-        latest_date = max(df.date_published.values)
-        print(f"Summarising for date: {latest_date}")
-        return df.loc[df.date_published == latest_date]
+        return df.loc[df.abstract_compressed.isna()]

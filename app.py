@@ -1,7 +1,9 @@
 """Main entry point for the compressor."""
 import argparse
+from datetime import datetime, timedelta
 
 from compressor import compressors, crawlers, models, reporters
+from compressor.data import PaperDB
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -44,7 +46,15 @@ if __name__ == "__main__":
         compression_result = c_model.go(paper_abstract)
         print(compression_result)
     elif args.task == "daily-arxiv":
-        crawlers.crawl_arxiv()
+        # If there are several days between submission and announcement,
+        # crawl all these days.
+        arxiv_df = PaperDB().get_papers_for_source("arxiv")
+        if len(arxiv_df) > 0:
+            oldest_date = max(arxiv_df.date_published.values)
+            oldest_date = datetime.strptime(oldest_date, "%Y-%m-%d") + timedelta(days=1)
+        else:
+            oldest_date = None
+        crawlers.crawl_arxiv(oldest_date=oldest_date)
         c = compressors.ArxivCompressor(c_model)
         c.compress()
         reporters.arxiv_daily_with_report()

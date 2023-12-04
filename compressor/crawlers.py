@@ -124,7 +124,7 @@ def crawl_arxiv(db: PaperDB | None = None, oldest_date: datetime | None = None):
                         abstract=el["summary"].replace("\n", " "),
                         url=el["link"],
                         authors=",".join([a["name"] for a in el["authors"]]),
-                        date_published=entry_date.strftime("%Y-%m-%d").split("-"),
+                        date_published=entry_date.strftime("%Y-%m-%d"),
                         source="arxiv",
                     )
                     casefold_summary = paper.abstract.casefold()

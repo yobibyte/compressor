@@ -34,4 +34,5 @@ class ArxivCompressor(Compressor):
 
     def retrieve(self):
         df = super().retrieve()
-        return df.loc[df.abstract_compressed.isna()]
+        res = df.loc[(df.abstract_compressed.isna())|(df.abstract_compressed=='')]
+        return res

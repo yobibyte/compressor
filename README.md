@@ -1,6 +1,8 @@
 # Compressor
 Because we do not have time to read everything.
 
+**Daily Arxiv summaries**: [https://yobibyte.github.io/arxiv_compressed.html](https://yobibyte.github.io/arxiv_compressed.html)
+
 ![](compressor.jpg)
 
 Compressor is an LLM-based scientific literature / talks summarisation project started by [yobibyte](https://twitter.com/y0b1byte).

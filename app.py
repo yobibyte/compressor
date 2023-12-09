@@ -4,6 +4,7 @@ from datetime import datetime, timedelta
 
 from compressor import compressors, crawlers, models, reporters
 from compressor.data import PaperDB
+import pypdf
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -20,13 +21,14 @@ if __name__ == "__main__":
             "arxiv-url",
             "daily-arxiv",
             "nature-url",
+            "pdf",
         ],
     )
     parser.add_argument(
         "-u",
         "--url",
         default="",
-        help="Arxiv URL to summarise. Active if task is arxiv-url.",
+        help="URL to summarise. Active if task is arxiv-url.",
     )
     args = parser.parse_args()
 
@@ -58,5 +60,13 @@ if __name__ == "__main__":
         c = compressors.ArxivCompressor(c_model)
         c.compress()
         reporters.arxiv_daily_with_report()
+    elif args.task == "pdf":
+        # TODO: We are very generous with the text inputs here. Glue the broken words.
+        # Get rid of junk. Sanitize.
+        # TODO: Currently we crop the paper to avoid memory blow up. Come up with a way to summarise the whole thing locally.
+        doc = pypdf.PdfReader(args.url)
+        fulltext = "\n".join([p.extract_text() for p in doc.pages])
+        compression_result = c_model.go(fulltext, full_summary=True)
+        print(compression_result)
     else:
         raise ValueError("Unknown task.")

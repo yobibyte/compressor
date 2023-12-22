@@ -115,6 +115,9 @@ def crawl_arxiv(db: PaperDB | None = None, oldest_date: datetime | None = None):
     stop_crawling = False
     while True:
         results = api_call(ctr, PAGE_SIZE)
+        if not results["entries"]:
+            print("No entries found... Exiting.")
+            break
         for el in results["entries"]:
             entry_date = datetime.fromisoformat(el["published"].rstrip("Z"))
             if entry_date >= oldest_date:

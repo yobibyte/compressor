@@ -22,6 +22,7 @@ if __name__ == "__main__":
             "daily-arxiv",
             "nature-url",
             "pdf",
+            "openreview",
         ],
     )
     parser.add_argument(
@@ -30,6 +31,13 @@ if __name__ == "__main__":
         default="",
         help="URL to summarise. Active if task is arxiv-url.",
     )
+    parser.add_argument(
+        "-v",
+        "--venue",
+        default="",
+        help="Venue to summarise. Active if task is openreview.",
+    )
+
     args = parser.parse_args()
 
     c_model = models.MODEL_MENU[args.model]()
@@ -60,6 +68,12 @@ if __name__ == "__main__":
         c = compressors.ArxivCompressor(c_model)
         c.compress()
         reporters.arxiv_daily_with_report()
+    elif args.task == "openreview":
+        venue = args.venue
+        venue = "ICLR.cc/2024/Conference"
+        #crawlers.crawl_openreview("iclr2024.csv", venue)
+        c = compressors.Compressor(source=venue, model=c_model)
+        c.compress()
     elif args.task == "pdf":
         # TODO: We are very generous with the text inputs here. Glue the broken words.
         # Get rid of junk. Sanitize.

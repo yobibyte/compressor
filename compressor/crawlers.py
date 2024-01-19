@@ -153,11 +153,6 @@ def crawl_openreview(output_fname: str, venue_id: str):
         baseurl="https://api2.openreview.net", username=username, password=password
     )
     submissions = client.get_all_notes(content={"venueid": venue_id})
-    processed_urls = set()
-    if os.path.exists(output_fname):
-        with open(output_fname, "r") as f:
-            for el in f:
-                processed_urls.add(el.split("|")[2])
 
     db = PaperDB()
     for s in tqdm(submissions):
@@ -165,7 +160,7 @@ def crawl_openreview(output_fname: str, venue_id: str):
             title=s.content["title"]["value"],
             url=f"https://openreview.net/forum?id={s.forum}",
             abstract=s.content["abstract"]["value"],
-            authors=", ".join(s.content["authors"]["value"]),
+            authors=", ".join(s.content["authors"]["value"] if "authors" in s.content else ''),
             keywords=", ".join(s.content["keywords"]["value"]),
             source=venue_id,
         )

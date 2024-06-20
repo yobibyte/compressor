@@ -12,7 +12,9 @@ class Compressor:
         self._model = model
 
     def retrieve(self):
-        return self._db.get_papers_for_source(self._source)
+        df = self._db.get_papers_for_source(self._source)
+        df = df[df.abstract_compressed == ""]
+        return df
 
     def compress(self):
         df = self.retrieve()

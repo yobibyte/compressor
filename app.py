@@ -1,4 +1,5 @@
 """Main entry point for the compressor."""
+
 import argparse
 from datetime import datetime, timedelta
 
@@ -69,10 +70,8 @@ if __name__ == "__main__":
         c.compress()
         reporters.arxiv_daily_with_report()
     elif args.task == "openreview":
-        venue = args.venue
-        venue = "ICLR.cc/2024/Conference"
-        #crawlers.crawl_openreview("iclr2024.csv", venue)
-        c = compressors.Compressor(source=venue, model=c_model)
+        crawlers.crawl_openreview(args.venue)
+        c = compressors.Compressor(source=args.venue, model=c_model)
         c.compress()
     elif args.task == "pdf":
         # TODO: We are very generous with the text inputs here. Glue the broken words.

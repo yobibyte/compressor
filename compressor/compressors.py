@@ -29,10 +29,10 @@ class Compressor:
 
 
 class ArxivCompressor(Compressor):
-    def __init__(self, model):
-        super().__init__("arxiv", model)
+    def __init__(self, model, db: PaperDB | None = None):
+        super().__init__("arxiv", model=model, db=db)
 
     def retrieve(self):
         df = super().retrieve()
-        res = df.loc[(df.abstract_compressed.isna())|(df.abstract_compressed=='')]
+        res = df.loc[(df.abstract_compressed.isna()) | (df.abstract_compressed == "")]
         return res

@@ -33,16 +33,13 @@ keywords_to_skip = [
 
 class AbstractCrawler(ABC):
     @abstractmethod
-    def crawl(self, url: str):
-        ...
+    def crawl(self, url: str): ...
 
     @abstractmethod
-    def get_full_text(self, url: str) -> str:
-        ...
+    def get_full_text(self, url: str) -> str: ...
 
     @abstractmethod
-    def get_abstract(self, url: str) -> str:
-        ...
+    def get_abstract(self, url: str) -> str: ...
 
 
 class NatureCrawler(AbstractCrawler):
@@ -146,7 +143,7 @@ def crawl_arxiv(db: PaperDB | None = None, oldest_date: datetime | None = None):
         ctr += PAGE_SIZE
 
 
-def crawl_openreview(output_fname: str, venue_id: str):
+def crawl_openreview(venue_id: str):
     username = input("Enter your OpenReview email.")
     password = getpass()
     client = openreview.api.OpenReviewClient(
@@ -160,8 +157,14 @@ def crawl_openreview(output_fname: str, venue_id: str):
             title=s.content["title"]["value"],
             url=f"https://openreview.net/forum?id={s.forum}",
             abstract=s.content["abstract"]["value"],
-            authors=", ".join(s.content["authors"]["value"] if "authors" in s.content else ''),
-            keywords=", ".join(s.content["keywords"]["value"]),
+            authors=", ".join(
+                s.content["authors"]["value"] if "authors" in s.content else ""
+            ),
+            keywords=(
+                ", ".join(s.content["keywords"]["value"])
+                if "keywords" in s.content
+                else ""
+            ),
             source=venue_id,
         )
         db.add(paper)

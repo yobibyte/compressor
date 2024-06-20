@@ -15,3 +15,7 @@ __pycache__/
 build/
 dist/
 papers.bkp
+compressor/bin
+compressor/lib
+compressor/lib64
+pyvenv.cfg

@@ -25,7 +25,9 @@ class PaperDB:
         if os.path.exists(fpath):
             self._df = pd.read_parquet(fpath)
         else:
+            print(f"There is no database in {fpath}, creating a new one.")
             self._df = pd.DataFrame(columns=[el.name for el in fields(Paper)])
+            self.commit()
 
     def commit(self):
         self._df.to_parquet(self._fpath)

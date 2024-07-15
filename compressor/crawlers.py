@@ -28,6 +28,7 @@ keywords_to_skip = [
     "shape reconstruction",
     "surveillance",
     "structure prediction",
+    "segmentation",
 ]
 
 

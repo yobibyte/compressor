@@ -29,6 +29,7 @@ keywords_to_skip = [
     "surveillance",
     "structure prediction",
     "segmentation",
+    "action recognition",
 ]
 
 

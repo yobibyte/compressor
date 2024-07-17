@@ -30,6 +30,8 @@ keywords_to_skip = [
     "structure prediction",
     "segmentation",
     "action recognition",
+    "pose estimation",
+    "quantum",
 ]
 
 

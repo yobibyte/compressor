@@ -32,6 +32,7 @@ keywords_to_skip = [
     "action recognition",
     "pose estimation",
     "quantum",
+    "autonomous driving",
 ]
 
 

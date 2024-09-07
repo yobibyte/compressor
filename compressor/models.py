@@ -10,18 +10,17 @@ class CompressorModel:
     def __init__(self, name):
         self._name = name
         # TODO: make this configurable.
-        self._context_size = 4096 
+        self._context_size = 4096
 
     def get_prompt(self, input: str):
         return input
 
-    def preprocess(self, input:str):
+    def preprocess(self, input: str):
         # To save on compute / debug. Temporarily we crop the inputs. Not ideal.
         # TODO: ^^^ think about the above. Maybe summarise each context size and summaries all the summaries.
-        input = input.split()[:self._context_size//2]
-        input = ' '.join(input)
+        input = input.split()[: self._context_size // 2]
+        input = " ".join(input)
         return input
-
 
     def postprocess(self, output: str):
         return output
@@ -33,7 +32,7 @@ class CompressorModel:
         with open(TMP_FNAME, "w") as f:
             f.write(payload)
 
-        command = f"{LLAMA_CPP_PATH}/main -m {LLAMA_CPP_PATH}/models/{self._name} --color --temp 0.7 --repeat_penalty 1.1 -n -2 --ctx-size {self._context_size} -e -f {TMP_FNAME}"
+        command = f"{LLAMA_CPP_PATH}/main -m {LLAMA_CPP_PATH}/models/{self._name} --color --temp 0.7 --repeat_penalty 1.1 -n -2 --ctx-size {self._context_size} -e -f {TMP_FNAME} -ngl 20"
         with subprocess.Popen(
             command.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE
         ) as proc:

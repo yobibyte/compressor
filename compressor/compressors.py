@@ -21,13 +21,16 @@ class Compressor:
         print(f"Compressing {len(df)} papers...")
         results = []
         for pid, paper in tqdm(df.iterrows(), total=len(df)):
-            title = paper.title
-            url = paper.url
-            abstract = paper.abstract
-            compressed_abstract = self._model.go(abstract)
-            self._db.add_abstract_compression(pid, compressed_abstract)
-            self._db.commit()
-            results.append((title, url, compressed_abstract))
+            try:
+                title = paper.title
+                url = paper.url
+                abstract = paper.abstract
+                compressed_abstract = self._model.go(abstract)
+                self._db.add_abstract_compression(pid, compressed_abstract)
+                self._db.commit()
+                results.append((title, url, compressed_abstract))
+            except:
+                print(f"Couldn't compress paper with pid {pid}.")
 
 
 class ArxivCompressor(Compressor):

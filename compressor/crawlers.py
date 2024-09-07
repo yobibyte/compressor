@@ -19,7 +19,7 @@ PAGE_SIZE = 100
 # ^^^ Crawlers support the oldest date to parse now. Compressor now compresses everything that is not compressed yet. Make this work for reporter. Use oldest date as well.
 
 keywords_to_skip = [
-    "adversarial attacks",
+    "adversarial attack",
     "blockchain",
     "emotion recognition",
     "occupancy prediction",

@@ -14,7 +14,7 @@ from tqdm import tqdm
 from compressor.data import Paper, PaperDB
 
 CATEGORIES_OF_INTEREST = {"cs.LG", "cs.AI", "cs.CV", "cs.CL"}
-PAGE_SIZE = 100
+PAGE_SIZE = 50
 # TODO add support for multiple dates. Probably keep the last date of submission and get everything up until now.
 # ^^^ Crawlers support the oldest date to parse now. Compressor now compresses everything that is not compressed yet. Make this work for reporter. Use oldest date as well.
 
